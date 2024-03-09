@@ -1,0 +1,55 @@
+.screen-node {
+    border: 1px solid #eee;
+    padding: 5px;
+    border-radius: 5px;
+    background: white;
+}
+
+.screen-node label {
+    display: block;
+    color: #777;
+    font-size: 12px;
+}
+
+.navigation-node {
+    border: 1px solid #eee;
+    padding: 5px;
+    border-radius: 5px;
+    background: white;
+}
+
+.navigation-node label {
+    display: block;
+    color: #777;
+    font-size: 12px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.delete {
+    background: #ff4d4f;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 8px;
+}
+
+.add {
+    background: #52c41a;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 8px;
+}
+
+.label {
+    font-size: 12px;
+    color: #777;
+}
