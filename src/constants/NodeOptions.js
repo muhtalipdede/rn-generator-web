@@ -125,7 +125,24 @@ const NodeOptions = [
             },
         ]
     },
-
+    {
+        type: 'flat-list',
+        name: 'FlatList',
+        fields: [
+            { name: 'data', type: 'array' },
+            { name: 'renderItem', type: 'string' },
+            { name: 'keyExtractor', type: 'string' },
+        ]
+    },
+    {
+        type: 'section-list',
+        name: 'SectionList',
+        fields: [
+            { name: 'sections', type: 'array' },
+            { name: 'renderItem', type: 'string' },
+            { name: 'keyExtractor', type: 'string' },
+        ]
+    }
 ]
 
 export default NodeOptions;
