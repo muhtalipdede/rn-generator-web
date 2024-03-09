@@ -10,14 +10,14 @@ function ScreenNode({ id, data, isConnectable }) {
 
   return (
     <div className="screen-node">
-      <Handle type="target" position={Position.Top} isConnectable={isConnectable} id="a" />
+      <Handle type="target" position={Position.Top} isConnectable={isConnectable} />
       <div>
         <span className="label">Screen</span>
       </div>
       <div>
         <input value={text} onChange={onChange} />
       </div>
-      <Handle type="source" position={Position.Bottom} id="b" isConnectable={isConnectable} />
+      <Handle type="source" position={Position.Bottom} isConnectable={isConnectable} />
     </div>
   );
 }

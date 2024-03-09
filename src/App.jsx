@@ -84,26 +84,22 @@ export default function App() {
     navigator.clipboard.writeText(url.href);
   }
 
-  const nodesAndEdgesConverter = (nodes, edges) => {
-    // ilk node'u bul diğerlerini ona göre children olarak ekle
-    let data = [];
-    let rootNode = nodes.find(node => !edges.find(edge => edge.target === node.id));
-    data.push({ ...rootNode, children: [] });
-    let rootChildren = edges.filter(edge => edge.source === rootNode.id).map(edge => nodes.find(node => node.id === edge.target));
-    data[0].children = rootChildren;
-    let queue = rootChildren;
-    while (queue.length > 0) {
-      let node = queue.shift();
-      let children = edges.filter(edge => edge.source === node.id).map(edge => nodes.find(n => n.id === edge.target));
-      node.children = children;
-      queue = queue.concat(children);
+  const converToParentChildJson = (node) => {
+    const children = edges.filter(edge => edge.source === node.id).map(edge => {
+      return converToParentChildJson(nodes.filter(node => node.id === edge.target)[0]);
+    });
+    return {
+      id: node.id,
+      name: node.data.label,
+      type: node.type,
+      children: children
     }
-    return data;
   }
 
   const downloadJson = () => {
-    const data = nodesAndEdgesConverter(nodes, edges);
-    const url = window.URL.createObjectURL(new Blob([JSON.stringify(data)]));
+    const data = converToParentChildJson(nodes.filter(node => node.id === '1')[0]);
+    console.log([data]);
+    const url = window.URL.createObjectURL(new Blob([JSON.stringify([data])]));
     const link = document.createElement('a');
     link.href = url;
     link.setAttribute('download', 'rn-generator.json');
