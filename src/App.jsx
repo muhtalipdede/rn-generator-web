@@ -34,6 +34,7 @@ export default function App() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [showNodeTypes, setShowNodeTypes] = useState(false);
+  const [showInfoModal, setShowInfoModal] = useState(false);
 
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),
@@ -110,6 +111,26 @@ export default function App() {
         <button onClick={downloadJson} style={{ position: 'absolute', top: 10, left: 130, zIndex: 4 }}>
           <i className="fas fa-download"></i>
         </button>
+        <button onClick={() => setShowInfoModal(!showInfoModal)} style={{ position: 'absolute', top: 10, left: 190, zIndex: 4 }}>
+          <i className="fas fa-info"></i>
+        </button>
+        {showInfoModal && (
+          <div style={{ position: 'absolute', top: 50, left: 190, zIndex: 4, display: 'flex', flexDirection: 'column', backgroundColor: 'white', borderRadius: 5 }}>
+            <p style={{ textAlign: 'center', color: 'black', fontWeight: 'bold' }}>React Native Generator</p>
+            <p style={{ textAlign: 'center', color: 'black' }}>You can create a flow chart of your React Native app and download the JSON file to use in the React Native Generator app. 
+            Click on the plus button to add a new node.
+            Click on the download button to download the JSON file. You can use this JSON file in the React Native Generator app.
+            You can use the
+            <a style={{ color: 'blue' }} href="https://www.npmjs.com/package/@muhtalipdede/rn-generator" target="_blank">
+              npx @muhtalipdede/rn-generator@latest [ProjectName]
+            </a>
+            command to generate the React Native code.
+            lick on the share button to share the link of the flow chart.
+            </p>
+            <p style={{ textAlign: 'center', color: 'black', fontWeight: 'bold' }}>Muhtalip Dede - 2024</p>
+            <p style={{ textAlign: 'center', color: 'black' }}> <a style={{ color: 'blue' }} href="https://muhtalipdede.github.io" target="_blank">muhtalipdede.github.io</a></p>
+          </div>
+        )}
         <Controls />
         <MiniMap />
         <Background variant="dots" gap={12} size={1} />
