@@ -61,7 +61,7 @@ const InitialNodes = [
         data: { label: 'ScrollView', fields: NodeOptions.filter(option => option.type === 'scroll-view')[0].fields },
     },
     {
-        id: '16', position: { x: 0, y: 500 }, type: 'text',
+        id: '16', position: { x: 0, y: 600 }, type: 'text',
         data: { label: 'Text', fields: NodeOptions.filter(option => option.type === 'text')[0].fields },
     }
 ];

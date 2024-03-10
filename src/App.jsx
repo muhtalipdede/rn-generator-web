@@ -7,7 +7,19 @@ import ReactFlow, {
   useEdgesState,
   addEdge,
 } from 'reactflow';
-import { NavigationNode, ScreenNode, TabNode, SafeAreaViewNode, ViewNode, ScrollViewNode, TextNode } from './components/Nodes';
+import {
+  NavigationNode,
+  ScreenNode,
+  TabNode,
+  SafeAreaViewNode,
+  ViewNode,
+  ScrollViewNode,
+  TextNode,
+  InputNode,
+  TouchableOpacityNode,
+  ButtonNode,
+  ImageNode
+} from './components/Nodes';
 import NodeOptions from './constants/NodeOptions';
 import initialNodes from './constants/InitialNodes';
 import initialEdges from './constants/InitialEdges';
@@ -22,10 +34,10 @@ const nodeTypes = {
   view: ViewNode,
   scrollView: ScrollViewNode,
   text: TextNode,
-  // input: InputNode,
-  // touchableOpacity: TouchableOpacityNode,
-  // button: ButtonNode,
-  // image: ImageNode,
+  input: InputNode,
+  touchableOpacity: TouchableOpacityNode,
+  button: ButtonNode,
+  image: ImageNode,
   // flatList: FlatListNode,
   // sectionList: SectionListNode
 };
@@ -35,6 +47,7 @@ export default function App() {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [showNodeTypes, setShowNodeTypes] = useState(false);
   const [showInfoModal, setShowInfoModal] = useState(false);
+  const [selectedNode, setSelectedNode] = useState(nodes[0]);
 
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),
@@ -45,6 +58,10 @@ export default function App() {
     let lastNode = nodes[nodes.length - 1];
     if (!lastNode) {
       lastNode = { position: { x: 0, y: 0 } };
+    }
+    if (NodeOptions.filter(option => option.type === type).length === 0) {
+      alert('Node type not supported, please select another type.');
+      return;
     }
     const newNode = {
       id: (parseInt(lastNode.id) + 1).toString(),
@@ -84,8 +101,89 @@ export default function App() {
     link.click();
   }
 
+  const onElementClick = (event, element) => {
+    console.log(element);
+    setSelectedNode(element);
+  }
+
+  const RightBar = () => {
+    return (
+      <div style={{ position: 'absolute', top: 0, right: 0, zIndex: 4, display: 'flex', flexDirection: 'column', backgroundColor: '#2c2c2c', height: '100vh' }}>
+        {selectedNode && (
+          <div style={{ display: 'flex', flexDirection: 'column', padding: 10 }}>
+            <p style={{ color: 'white', fontWeight: 'bold' }}>{selectedNode.data.label}</p>
+            {selectedNode.data.fields.map((field, index) => (
+              field.type === 'object' ? (
+                <div key={index} style={{ display: 'flex', flexDirection: 'column' }}>
+                  <p style={{ color: 'white', fontWeight: 'bold' }}>{field.name}</p>
+                  {field.fields.map((subField, subIndex) => (
+                    <div key={subIndex} style={{ display: 'flex', flexDirection: 'column' }}>
+                      <p style={{ color: 'white', fontWeight: 'bold' }}>{subField.name}</p>
+                      <input type="text" />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div key={index} style={{ display: 'flex', flexDirection: 'column' }}>
+                  <p style={{ color: 'white', fontWeight: 'bold' }}>{field.name}</p>
+                  <input type="text" />
+                </div>
+              )
+            ))}
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  const LeftBar = () => {
+    return (
+      <div style={{ position: 'absolute', top: 0, left: 0, zIndex: 4, display: 'flex', flexDirection: 'column', backgroundColor: '#2c2c2c', height: '100vh', gap: 10, padding: 10 }}>
+        {NodeOptions.map((type) => (
+          <a key={type.type} onClick={() => addNode(type.type)} style={{ color: 'white', cursor: 'pointer' }}>
+            {type.name}
+          </a>
+        ))}
+      </div>
+    )
+  }
+
+  const handleProfile = () => {
+    console.log('profile');
+  }
+
+  const Header = () => {
+    return <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', padding: 10 }}>
+      <div style={{ display: 'flex', gap: 10 }}>
+        <button onClick={shareLink}>
+          <i className="fas fa-share-alt"></i>
+        </button>
+        <button onClick={downloadJson}>
+          <i className="fas fa-download"></i>
+        </button>
+        <button onClick={() => setShowInfoModal(!showInfoModal)}>
+          <i className="fas fa-info"></i>
+        </button>
+      </div>
+      <div>
+        <button onClick={handleProfile}>
+          <i className="fas fa-user"></i>
+        </button>
+      </div>
+    </div>
+  }
+
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
+      <div style={{ position: 'absolute', top: 0, zIndex: 4, width: '100%', display: 'flex', justifyContent: 'center', backgroundColor: '#2c2c2c' }}>
+        <Header />
+      </div>
+      <div style={{ position: 'absolute', top: 50, zIndex: 4, display: 'flex', flexDirection: 'column', gap: 10, backgroundColor: '#2c2c2c', borderRadius: 5 }}>
+        <LeftBar />
+      </div>
+      <div style={{ position: 'absolute', top: 50, right: 0, zIndex: 4, display: 'flex', flexDirection: 'column', gap: 10, backgroundColor: '#2c2c2c', borderRadius: 5 }}>
+        <RightBar />
+      </div>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -94,38 +192,27 @@ export default function App() {
         onConnect={onConnect}
         nodeTypes={nodeTypes}
         fitView="true"
+        onNodeClick={onElementClick}
       >
-        <button onClick={shareLink} style={{ position: 'absolute', top: 10, left: 10, zIndex: 4 }}>
-          <i className="fas fa-share-alt"></i>
-        </button>
-        <button onClick={() => setShowNodeTypes(!showNodeTypes)} style={{ position: 'absolute', top: 10, left: 70, zIndex: 4 }}>
-          <i className="fas fa-plus"></i>
-        </button>
         {showNodeTypes && (
-          <div style={{ position: 'absolute', top: 50, left: 10, zIndex: 4, display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div style={{ position: 'absolute', top: 50, left: 10, zIndex: 4, display: 'flex', flexDirection: 'column', gap: 10, backgroundColor: '#2c2c2c', borderRadius: 5 }}>
             {NodeOptions.map((type) => (
               <button key={type.type} onClick={() => addNode(type.type)}>{type.name}</button>
             ))}
           </div>
         )}
-        <button onClick={downloadJson} style={{ position: 'absolute', top: 10, left: 130, zIndex: 4 }}>
-          <i className="fas fa-download"></i>
-        </button>
-        <button onClick={() => setShowInfoModal(!showInfoModal)} style={{ position: 'absolute', top: 10, left: 190, zIndex: 4 }}>
-          <i className="fas fa-info"></i>
-        </button>
         {showInfoModal && (
-          <div style={{ position: 'absolute', top: 50, left: 190, zIndex: 4, display: 'flex', flexDirection: 'column', backgroundColor: 'white', borderRadius: 5 }}>
+          <div style={{ position: 'absolute', top: 50, left: 190, zIndex: 4, display: 'flex', flexDirection: 'column', backgroundColor: '#2c2c2c', borderRadius: 5 }}>
             <p style={{ textAlign: 'center', color: 'black', fontWeight: 'bold' }}>React Native Generator</p>
-            <p style={{ textAlign: 'center', color: 'black' }}>You can create a flow chart of your React Native app and download the JSON file to use in the React Native Generator app. 
-            Click on the plus button to add a new node.
-            Click on the download button to download the JSON file. You can use this JSON file in the React Native Generator app.
-            You can use the
-            <a style={{ color: 'blue' }} href="https://www.npmjs.com/package/@muhtalipdede/rn-generator" target="_blank">
-              npx @muhtalipdede/rn-generator@latest [ProjectName]
-            </a>
-            command to generate the React Native code.
-            lick on the share button to share the link of the flow chart.
+            <p style={{ textAlign: 'center', color: 'black' }}>You can create a flow chart of your React Native app and download the JSON file to use in the React Native Generator app.
+              Click on the plus button to add a new node.
+              Click on the download button to download the JSON file. You can use this JSON file in the React Native Generator app.
+              You can use the
+              <a style={{ color: 'blue' }} href="https://www.npmjs.com/package/@muhtalipdede/rn-generator" target="_blank">
+                npx @muhtalipdede/rn-generator@latest [ProjectName]
+              </a>
+              command to generate the React Native code.
+              lick on the share button to share the link of the flow chart.
             </p>
             <p style={{ textAlign: 'center', color: 'black', fontWeight: 'bold' }}>Muhtalip Dede - 2024</p>
             <p style={{ textAlign: 'center', color: 'black' }}> <a style={{ color: 'blue' }} href="https://muhtalipdede.github.io" target="_blank">muhtalipdede.github.io</a></p>

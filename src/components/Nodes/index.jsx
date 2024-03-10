@@ -5,6 +5,10 @@ import SafeAreaViewNode from "./SafeAreaViewNode";
 import ViewNode from "./ViewNode";
 import ScrollViewNode from "./ScrollViewNode";
 import TextNode from "./TextNode";
+import InputNode from "./InputNode";
+import TouchableOpacityNode from "./TouchableOpacityNode";
+import ButtonNode from "./ButtonNode";
+import ImageNode from "./ImageNode";
 
 export { 
     NavigationNode, 
@@ -13,5 +17,9 @@ export {
     SafeAreaViewNode, 
     ViewNode,
     ScrollViewNode,
-    TextNode
+    TextNode,
+    InputNode,
+    TouchableOpacityNode,
+    ButtonNode,
+    ImageNode
 };
