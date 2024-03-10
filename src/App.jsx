@@ -106,31 +106,100 @@ export default function App() {
     setSelectedNode(element);
   }
 
+  const removeNode = (node) => {
+    setNodes((prevNodes) => prevNodes.filter(n => n.id !== node.id));
+    setEdges((prevEdges) => prevEdges.filter(e => e.source !== node.id && e.target !== node.id));
+    setSelectedNode(null);
+  }
+
+  const getChildren = (node) => {
+    return edges.filter(edge => edge.source === node.id).map(edge => {
+      return nodes.filter(node => node.id === edge.target)[0];
+    });
+  }
+
+  const DevicePreview = () => {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: 10, width: 300, height: 600, backgroundColor: 'black', borderRadius: 20 }}>
+        {getChildren(selectedNode).map((child, index) => (
+          <div key={index} style={{ display: 'flex', flexDirection: 'column', gap: 10, backgroundColor: 'black', borderRadius: 20 }}>
+            {getChildren(child).map((subChild, subIndex) => (
+              subChild.type === 'text' ? (
+                <div key={subIndex} style={{ display: 'flex', flexDirection: 'column' }}>
+                  <p style={{ color: 'white', fontWeight: 'bold' }}>{subChild.data.label}</p>
+                </div>
+              ) : (subChild.type === 'input' ? (
+                <div key={subIndex} style={{ display: 'flex', flexDirection: 'column' }}>
+                  <input type="text" style={{ backgroundColor: 'white', color: 'black', height: 20, borderRadius: 10, padding: 10 }} />
+                </div>
+              ) : (subChild.type === 'touchableOpacity' ? (
+                <div key={subIndex} style={{ display: 'flex', flexDirection: 'column' }}>
+                  <button style={{ backgroundColor: 'blue', color: 'white', padding: 10, borderRadius: 10 }}>Button</button>
+                </div>
+              ) : (subChild.type === 'button' ? (
+                <div key={subIndex} style={{ display: 'flex', flexDirection: 'column' }}>
+                  <button style={{ backgroundColor: 'blue', color: 'white', padding: 10, borderRadius: 10 }}>Button</button>
+                </div>
+              ) : (subChild.type === 'image' ? (
+                <div key={subIndex} style={{ display: 'flex', flexDirection: 'column' }}>
+                  <img src="https://miro.medium.com/v2/resize:fit:1024/1*QY5S4senfFh-mIViSi5A_Q.png" alt="logo" />
+                </div>
+              ) : (subChild.type === 'view' ? (
+                <div key={subIndex} style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'blue', padding: 10, borderRadius: 10, height: 100, justifyContent: 'center' }}>
+                  <p style={{ color: 'white', fontWeight: 'bold' }}>{subChild.data.label}</p>
+                </div>
+              ) : (subChild.type === 'scrollView' ? (
+                <div key={subIndex} style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'blue', padding: 10, borderRadius: 10, height: 100, justifyContent: 'center' }}>
+                  <p style={{ color: 'white', fontWeight: 'bold' }}>{subChild.data.label}</p>
+                </div>
+              ) : (subChild.type === 'safeAreaView' ? (
+                <div key={subIndex} style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'blue', padding: 10, borderRadius: 10, height: 100, justifyContent: 'center' }}>
+                  <p style={{ color: 'white', fontWeight: 'bold' }}>{subChild.data.label}</p>
+                </div>
+              ) : (<div key={subIndex} style={{ display: 'flex', flexDirection: 'column' }}>
+                <p style={{ color: 'white', fontWeight: 'bold' }}>{subChild.data.label}</p>
+              </div>))))))))))}
+          </div>
+        ))}
+      </div>
+    )
+  }
+
   const RightBar = () => {
     return (
-      <div style={{ position: 'absolute', top: 0, right: 0, zIndex: 4, display: 'flex', flexDirection: 'column', backgroundColor: '#2c2c2c', height: '100vh' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: 10 }}>
         {selectedNode && (
-          <div style={{ display: 'flex', flexDirection: 'column', padding: 10 }}>
-            <p style={{ color: 'white', fontWeight: 'bold' }}>{selectedNode.data.label}</p>
-            {selectedNode.data.fields.map((field, index) => (
-              field.type === 'object' ? (
-                <div key={index} style={{ display: 'flex', flexDirection: 'column' }}>
-                  <p style={{ color: 'white', fontWeight: 'bold' }}>{field.name}</p>
-                  {field.fields.map((subField, subIndex) => (
-                    <div key={subIndex} style={{ display: 'flex', flexDirection: 'column' }}>
-                      <p style={{ color: 'white', fontWeight: 'bold' }}>{subField.name}</p>
-                      <input type="text" />
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div key={index} style={{ display: 'flex', flexDirection: 'column' }}>
-                  <p style={{ color: 'white', fontWeight: 'bold' }}>{field.name}</p>
-                  <input type="text" />
-                </div>
-              )
-            ))}
-          </div>
+          selectedNode.type !== 'screen' ? (
+            <div style={{ display: 'flex', flexDirection: 'column', padding: 10 }}>
+              <p style={{ color: 'white', fontWeight: 'bold' }}>{selectedNode.data.label}</p>
+              {selectedNode.data.fields.map((field, index) => (
+                field.type === 'object' ? (
+                  <div key={index} style={{ display: 'flex', flexDirection: 'column' }}>
+                    <p style={{ color: 'white', fontWeight: 'bold', backgroundColor: 'black', padding: 5 }}>
+                      {field.name}
+                    </p>
+                    {field.fields.map((subField, subIndex) => (
+                      <div key={subIndex} style={{ display: 'flex', flexDirection: 'column' }}>
+                        <p style={{ color: 'white', fontWeight: 'bold' }}>{subField.name}</p>
+                        <input type="text" />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div key={index} style={{ display: 'flex', flexDirection: 'column' }}>
+                    <p style={{ color: 'white', fontWeight: 'bold', backgroundColor: 'black', padding: 5 }}>
+                      {field.name}
+                    </p>
+                    <input type="text" />
+                  </div>
+                )
+              ))}
+              <div style={{ display: 'flex', flexDirection: 'column', marginTop: 10 }}>
+                <button onClick={() => removeNode(selectedNode)}>Remove Node</button>
+              </div>
+            </div>) : (
+            <DevicePreview />
+          )
         )}
       </div>
     )
