@@ -50,7 +50,7 @@ const InitialNodes = [
     },
     {
         id: '13', position: { x: 0, y: 400 }, type: 'safeAreaView',
-        data: { label: 'SafeAreaView', fields: NodeOptions.filter(option => option.type === 'safe-area-view')[0].fields },
+        data: { label: 'SafeAreaView', fields: NodeOptions.filter(option => option.type === 'safeAreaView')[0].fields },
     },
     {
         id: '14', position: { x: 300, y: 500 }, type: 'view',
@@ -58,7 +58,7 @@ const InitialNodes = [
     },
     {
         id: '15', position: { x: 500, y: 600 }, type: 'scrollView',
-        data: { label: 'ScrollView', fields: NodeOptions.filter(option => option.type === 'scroll-view')[0].fields },
+        data: { label: 'ScrollView', fields: NodeOptions.filter(option => option.type === 'scrollView')[0].fields },
     },
     {
         id: '16', position: { x: 0, y: 600 }, type: 'text',

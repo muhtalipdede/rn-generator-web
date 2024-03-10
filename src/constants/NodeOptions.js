@@ -21,7 +21,7 @@ const NodeOptions = [
         ]
     },
     {
-        type: 'safe-area-view',
+        type: 'safeAreaView',
         name: 'SafeAreaView',
         fields: [
             {
@@ -43,7 +43,7 @@ const NodeOptions = [
         ]
     },
     {
-        type: 'scroll-view',
+        type: 'scrollView',
         name: 'ScrollView',
         fields: [
             {
@@ -82,7 +82,7 @@ const NodeOptions = [
         ]
     },
     {
-        type: 'touchable-opacity',
+        type: 'touchableOpacity',
         name: 'TouchableOpacity',
         fields: [
             {

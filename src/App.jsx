@@ -50,8 +50,33 @@ export default function App() {
   const [selectedNode, setSelectedNode] = useState(nodes[0]);
 
   const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges],
+    (params) => {
+      const sourceNode = nodes.find(node => node.id === params.source);
+      const targetNode = nodes.find(node => node.id === params.target);
+  
+      if (sourceNode.type === 'screen' && targetNode.type === 'navigation') {
+        alert('You cannot connect a screen to a navigation node.');
+        return;
+      }
+  
+      if (sourceNode.type === 'screen' && !['view', 'scrollView', 'safeAreaView'].includes(targetNode.type)) {
+        alert('You cannot connect a screen to this node.');
+        return;
+      }
+  
+      if (sourceNode.type === 'navigation' && targetNode.type !== 'screen') {
+        alert('You cannot connect a navigation to this node.');
+        return;
+      }
+  
+      if (sourceNode.type === 'screen' && ['view', 'scrollView', 'safeAreaView'].includes(targetNode.type) && edges.some(edge => edge.source === sourceNode.id)) {
+        alert('You cannot connect a screen to more than one view, scrollview or safeareaview.');
+        return;
+      }
+  
+      setEdges((eds) => addEdge(params, eds));
+    },
+    [setEdges, nodes, edges],
   );
 
   const addNode = (type) => {
@@ -102,11 +127,14 @@ export default function App() {
   }
 
   const onElementClick = (event, element) => {
-    console.log(element);
     setSelectedNode(element);
   }
 
   const removeNode = (node) => {
+    if (node.id === '1') {
+      alert('You cannot remove the root node.');
+      return;
+    }
     setNodes((prevNodes) => prevNodes.filter(n => n.id !== node.id));
     setEdges((prevEdges) => prevEdges.filter(e => e.source !== node.id && e.target !== node.id));
     setSelectedNode(null);
