@@ -3,21 +3,21 @@ const NodeOptions = [
         type: 'navigation',
         name: 'Navigation',
         fields: [
-            { name: 'name', type: 'string' },
+            { name: 'name', type: 'string', default: '', value: '' },
         ]
     },
     {
         type: 'tab',
         name: 'Tab',
         fields: [
-            { name: 'name', type: 'string' },
+            { name: 'name', type: 'string', default: '', value: '' },
         ]
     },
     {
         type: 'screen',
         name: 'Screen',
         fields: [
-            { name: 'name', type: 'string' },
+            { name: 'name', type: 'string', default: '', value: '' },
         ]
     },
     {
@@ -25,8 +25,17 @@ const NodeOptions = [
         name: 'SafeAreaView',
         fields: [
             {
-                name: 'style', type: 'object', fields: [
-                    { name: 'backgroundColor', type: 'string' },
+                name: 'style', type: 'object',
+                fields: [
+                    { name: 'backgroundColor', type: 'string', default: 'red', value: 'red' },
+                    { name: 'flex', type: 'number', default: 1, value: 1 },
+                    { name: 'justifyContent', type: 'string', default: 'center', value: 'center' },
+                    { name: 'alignItems', type: 'string', default: 'center', value: 'center' },
+                    { name: 'padding', type: 'number', default: 20, value: 20 },
+                    { name: 'paddingTop', type: 'number', default: 20, value: 20 },
+                    { name: 'borderColor', type: 'string', default: 'black', value: 'black' },
+                    { name: 'borderWidth', type: 'number', default: 1, value: 1 },
+                    { name: 'borderRadius', type: 'number', default: 10, value: 10 },
                 ]
             },
         ]
@@ -36,8 +45,26 @@ const NodeOptions = [
         name: 'View',
         fields: [
             {
-                name: 'style', type: 'object', fields: [
-                    { name: 'backgroundColor', type: 'string' },
+                name: 'style', type: 'object',
+                fields: [
+                    { name: 'backgroundColor', type: 'string', default: 'white', value: 'white' },
+                    { name: 'flex', type: 'number', default: 1, value: 1 },
+                    { name: 'justifyContent', type: 'string', default: 'center', value: 'center' },
+                    { name: 'alignItems', type: 'string', default: 'center', value: 'center' },
+                    { name: 'gap', type: 'number', default: 20, value: 20 },
+                    { name: 'padding', type: 'number', default: 20, value: 20 },
+                    { name: 'paddingTop', type: 'number', default: 20, value: 20 },
+                    { name: 'borderColor', type: 'string', default: 'black', value: 'black' },
+                    { name: 'borderWidth', type: 'number', default: 1, value: 1 },
+                    { name: 'borderRadius', type: 'number', default: 10, value: 10 },
+                    { name: 'shadowColor', type: 'string', default: 'black', value: 'black' },
+                    { name: 'shadowOffset', type: 'object', fields: [
+                        { name: 'width', type: 'number', default: 0, value: 0 },
+                        { name: 'height', type: 'number', default: 0, value: 0 },
+                    ] },
+                    { name: 'shadowOpacity', type: 'number', default: 0.5, value: 0.5 },
+                    { name: 'shadowRadius', type: 'number', default: 10, value: 10 },
+                    { name: 'elevation', type: 'number', default: 10, value: 10 },
                 ]
             },
         ]
@@ -47,8 +74,14 @@ const NodeOptions = [
         name: 'ScrollView',
         fields: [
             {
-                name: 'style', type: 'object', fields: [
-                    { name: 'backgroundColor', type: 'string' },
+                name: 'style', type: 'object',
+                fields: [
+                    { name: 'backgroundColor', type: 'string', default: 'white', value: 'white' },
+                    { name: 'flex', type: 'number', default: 1, value: 1 },
+                    { name: 'justifyContent', type: 'string', default: 'center', value: 'center' },
+                    { name: 'alignItems', type: 'string', default: 'center', value: 'center' },
+                    { name: 'padding', type: 'number', default: 20, value: 20 },
+                    { name: 'paddingTop', type: 'number', default: 20, value: 20 },
                 ]
             },
         ]
@@ -57,11 +90,17 @@ const NodeOptions = [
         type: 'text',
         name: 'Text',
         fields: [
-            { name: 'text', type: 'string' },
+            { name: 'text', type: 'string', default: 'Text', value: 'Text' },
             {
-                name: 'style', type: 'object', fields: [
-                    { name: 'color', type: 'string' },
-                    { name: 'backgroundColor', type: 'string' },
+                name: 'style', type: 'object',
+                fields: [
+                    { name: 'color', type: 'string', default: 'black', value: 'black' },
+                    { name: 'backgroundColor', type: 'string', default: 'white', value: 'white' },
+                    { name: 'fontSize', type: 'number', default: 16, value: 16 },
+                    { name: 'fontWeight', type: 'string', default: 'normal', value: 'normal' },
+                    { name: 'textAlign', type: 'string', default: 'center', value: 'center' },
+                    { name: 'padding', type: 'number', default: 20, value: 20 },
+                    { name: 'paddingTop', type: 'number', default: 20, value: 20 },
                 ]
             },
         ]
@@ -70,13 +109,19 @@ const NodeOptions = [
         type: 'input',
         name: 'Input',
         fields: [
-            { name: 'placeholder', type: 'string' },
-            { name: 'placeholderTextColor', type: 'string' },
-            { name: 'value', type: 'string' },
+            { name: 'placeholder', type: 'string', default: 'Enter text', value: 'Enter text' },
+            { name: 'placeholderTextColor', type: 'string', default: 'gray', value: 'gray' },
+            { name: 'value', type: 'string', default: '', value: '' },
             {
-                name: 'style', type: 'object', fields: [
-                    { name: 'color', type: 'string' },
-                    { name: 'backgroundColor', type: 'string' },
+                name: 'style', type: 'object',
+                fields: [
+                    { name: 'color', type: 'string', default: 'blue', value: 'blue' },
+                    { name: 'backgroundColor', type: 'string', default: 'white', value: 'white' },
+                    { name: 'fontSize', type: 'number', default: 16, value: 16 },
+                    { name: 'fontWeight', type: 'string', default: 'normal', value: 'normal' },
+                    { name: 'textAlign', type: 'string', default: 'center', value: 'center' },
+                    { name: 'padding', type: 'number', default: 20, value: 20 },
+                    { name: 'paddingTop', type: 'number', default: 20, value: 20 },
                 ]
             },
         ]
@@ -86,9 +131,15 @@ const NodeOptions = [
         name: 'TouchableOpacity',
         fields: [
             {
-                name: 'style', type: 'object', fields: [
-                    { name: 'color', type: 'string' },
-                    { name: 'backgroundColor', type: 'string' },
+                name: 'style', type: 'object', 
+                fields: [
+                    { name: 'color', type: 'string', default: 'black', value: 'black' },
+                    { name: 'backgroundColor', type: 'string', default: 'white', value: 'white' },
+                    { name: 'fontSize', type: 'number', default: 16, value: 16 },
+                    { name: 'fontWeight', type: 'string', default: 'normal', value: 'normal' },
+                    { name: 'textAlign', type: 'string', default: 'center', value: 'center' },
+                    { name: 'padding', type: 'number', default: 20, value: 20 },
+                    { name: 'paddingTop', type: 'number', default: 20, value: 20 },
                 ]
             },
         ]
@@ -97,17 +148,24 @@ const NodeOptions = [
         type: 'button',
         name: 'Button',
         fields: [
-            { name: 'text', type: 'string' },
+            { name: 'text', type: 'string', default: 'Button', value: 'Button' },
             {
-                name: 'onPress', type: 'object', fields: [
-                    { name: 'type', type: 'string' },
-                    { name: 'name', type: 'string' },
+                name: 'onPress', type: 'object', 
+                fields: [
+                    { name: 'type', type: 'string', default: 'function', value: 'function' },
+                    { name: 'value', type: 'string', default: '', value: '' },
                 ]
             },
             {
-                name: 'style', type: 'object', fields: [
-                    { name: 'color', type: 'string' },
-                    { name: 'backgroundColor', type: 'string' },
+                name: 'style', type: 'object', 
+                fields: [
+                    { name: 'color', type: 'string', default: 'black', value: 'black' },
+                    { name: 'backgroundColor', type: 'string', default: 'white', value: 'white' },
+                    { name: 'fontSize', type: 'number', default: 16, value: 16 },
+                    { name: 'fontWeight', type: 'string', default: 'normal', value: 'normal' },
+                    { name: 'textAlign', type: 'string', default: 'center', value: 'center' },
+                    { name: 'padding', type: 'number', default: 20, value: 20 },
+                    { name: 'paddingTop', type: 'number', default: 20, value: 20 },
                 ]
             },
         ]
@@ -116,11 +174,14 @@ const NodeOptions = [
         type: 'image',
         name: 'Image',
         fields: [
-            { name: 'source', type: 'string' },
+            { name: 'source', type: 'string', default: 'https://reactnative.dev/img/tiny_logo.png', value: 'https://reactnative.dev/img/tiny_logo.png' },
             {
-                name: 'style', type: 'object', fields: [
-                    { name: 'width', type: 'number' },
-                    { name: 'height', type: 'number' },
+                name: 'style', type: 'object', 
+                fields: [
+                    { name: 'width', type: 'number', default: 100, value: 100 },
+                    { name: 'height', type: 'number', default: 100, value: 100 },
+                    { name: 'padding', type: 'number', default: 20, value: 20 },
+                    { name: 'paddingTop', type: 'number', default: 20, value: 20 },
                 ]
             },
         ]

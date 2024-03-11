@@ -48,32 +48,33 @@ export default function App() {
   const [showNodeTypes, setShowNodeTypes] = useState(false);
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [selectedNode, setSelectedNode] = useState(nodes[0]);
+  const [selectedScreen, setSelectedScreen] = useState(nodes.filter(node => node.type === 'screen')[0]);
 
   const onConnect = useCallback(
     (params) => {
       const sourceNode = nodes.find(node => node.id === params.source);
       const targetNode = nodes.find(node => node.id === params.target);
-  
+
       if (sourceNode.type === 'screen' && targetNode.type === 'navigation') {
         alert('You cannot connect a screen to a navigation node.');
         return;
       }
-  
+
       if (sourceNode.type === 'screen' && !['view', 'scrollView', 'safeAreaView'].includes(targetNode.type)) {
         alert('You cannot connect a screen to this node.');
         return;
       }
-  
+
       if (sourceNode.type === 'navigation' && targetNode.type !== 'screen') {
         alert('You cannot connect a navigation to this node.');
         return;
       }
-  
+
       if (sourceNode.type === 'screen' && ['view', 'scrollView', 'safeAreaView'].includes(targetNode.type) && edges.some(edge => edge.source === sourceNode.id)) {
         alert('You cannot connect a screen to more than one view, scrollview or safeareaview.');
         return;
       }
-  
+
       setEdges((eds) => addEdge(params, eds));
     },
     [setEdges, nodes, edges],
@@ -90,7 +91,7 @@ export default function App() {
     }
     const newNode = {
       id: (parseInt(lastNode.id) + 1).toString(),
-      position: { x: lastNode.position.x + 100, y: lastNode.position.y + 100 },
+      position: { x: lastNode.position.x, y: lastNode.position.y + 100 },
       type: type,
       data: { label: type, fields: NodeOptions.filter(option => option.type === type)[0].fields }
     };
@@ -128,6 +129,9 @@ export default function App() {
 
   const onElementClick = (event, element) => {
     setSelectedNode(element);
+    if (element.type === 'screen') {
+      setSelectedScreen(element);
+    }
   }
 
   const removeNode = (node) => {
@@ -146,40 +150,40 @@ export default function App() {
     });
   }
 
-  const TextComponent = ({ label }) => (
+  const TextComponent = ({ }) => (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <p style={{ color: 'white', fontWeight: 'bold' }}>{label}</p>
+      <p style={{ color: 'black', fontWeight: 'bold' }}>Text</p>
     </div>
   );
-  
+
   const InputComponent = () => (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <input type="text" style={{ backgroundColor: 'white', color: 'black', height: 20, borderRadius: 10, padding: 10 }} />
+      <input type="text" style={{ padding: 10, borderRadius: 10 }} />
     </div>
   );
-  
+
   const ButtonComponent = () => (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <button style={{ backgroundColor: 'blue', color: 'white', padding: 10, borderRadius: 10 }}>Button</button>
     </div>
   );
-  
+
   const ImageComponent = () => (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <img src="https://miro.medium.com/v2/resize:fit:1024/1*QY5S4senfFh-mIViSi5A_Q.png" alt="logo" />
     </div>
   );
-  
+
   const ViewComponent = ({ label, children }) => (
     <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'blue', padding: 10, borderRadius: 10, height: 100, justifyContent: 'center' }}>
       {children && children.map(renderSubChild)}
     </div>
   );
-  
+
   const renderSubChild = (subChild, subIndex) => {
     switch (subChild.type) {
       case 'text':
-        return <TextComponent key={subIndex} label={subChild.data.label} />;
+        return <TextComponent key={subIndex} />;
       case 'input':
         return <InputComponent key={subIndex} />;
       case 'touchableOpacity':
@@ -190,7 +194,7 @@ export default function App() {
       case 'view':
       case 'scrollView':
       case 'safeAreaView':
-        return <ViewComponent key={subIndex} label={subChild.data.label} children={getChildren(subChild)} />;
+        return <ViewComponent key={subIndex} children={getChildren(subChild)} />;
       default:
         return (
           <div key={subIndex} style={{ display: 'flex', flexDirection: 'column' }}>
@@ -200,66 +204,66 @@ export default function App() {
         );
     }
   };
-  
+
+  const convertStyle = (fields) => {
+    if (!fields) {
+      return {};
+    }
+    let style = {};
+    fields.forEach(field => {
+      style[field.name] = field.value;
+    });
+    return style;
+  }
+
   const DevicePreview = () => {
-    const children = getChildren(selectedNode);
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: 10, width: 300, height: 600, backgroundColor: 'black', borderRadius: 20 }}>
-        {children.length > 0 ? getChildren(selectedNode).map((child, index) => (
-          <div key={index} style={{ display: 'flex', flexDirection: 'column', gap: 10, backgroundColor: 'black', borderRadius: 20 }}>
-            {getChildren(child).map(renderSubChild)}
+    const children = getChildren(selectedScreen);
+    console.log(children);
+    if (children.length === 0) {
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: 10, width: 300, height: 600, backgroundColor: 'white', borderRadius: 20 }}>
+          <p style={{ textAlign: 'center', color: 'black', fontWeight: 'bold' }}>No children</p>
+        </div>
+      );
+    }
+    if (children.length > 2) {
+      alert('You can only have 2 children in a screen.');
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: 10, width: 300, height: 600, backgroundColor: 'white', borderRadius: 20 }}>
+          <p style={{ textAlign: 'center', color: 'black', fontWeight: 'bold' }}>You can only have 2 children in a screen.</p>
+        </div>
+      );
+    }
+
+    if (children.length === 1) {
+      const frameFields = children[0].data.fields[0].fields || [];
+      const style = convertStyle(frameFields);
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: 10, width: 300, height: 600, backgroundColor: 'white', borderRadius: 20 }}>
+          <div style={{ ...style }}>
+            {getChildren(children[0]).map(renderSubChild)}
           </div>
-        )) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, backgroundColor: 'black', borderRadius: 20 }}>
-            <p style={{ color: 'white', fontWeight: 'bold' }}>{selectedNode.data.label}</p>
-            <p style={{ color: 'white' }}>No children</p>
-          </div>
-        )}
-      </div>
-    );
+        </div>
+      );
+    }
   };
 
   const FieldComponent = ({ field }) => (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <p style={{ color: 'white', fontWeight: 'bold', backgroundColor: 'black', padding: 5 }}>
-        {field.name}
-      </p>
-      <input type="text" />
     </div>
   );
-  
+
   const ObjectFieldComponent = ({ field }) => (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <p style={{ color: 'white', fontWeight: 'bold', backgroundColor: 'black', padding: 5 }}>
-        {field.name}
-      </p>
-      {field.fields.map((subField, subIndex) => (
-        <FieldComponent key={subIndex} field={subField} />
-      ))}
+
     </div>
   );
-  
+
   const RightBar = () => {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: 10 }}>
-        {selectedNode && (
-          selectedNode.type !== 'screen' ? (
-            <div style={{ display: 'flex', flexDirection: 'column', padding: 10 }}>
-              <p style={{ color: 'white', fontWeight: 'bold' }}>{selectedNode.data.label}</p>
-              {selectedNode.data.fields.map((field, index) => (
-                field.type === 'object' ? (
-                  <ObjectFieldComponent key={index} field={field} />
-                ) : (
-                  <FieldComponent key={index} field={field} />
-                )
-              ))}
-              <div style={{ display: 'flex', flexDirection: 'column', marginTop: 10 }}>
-                <button onClick={() => removeNode(selectedNode)}>Remove Node</button>
-              </div>
-            </div>) : (
-            <DevicePreview />
-          )
-        )}
+        {selectedScreen.type === 'screen' && <DevicePreview />}
+        <button onClick={() => removeNode(selectedNode)}>Remove Node</button>
       </div>
     )
   }
