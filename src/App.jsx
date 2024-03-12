@@ -108,10 +108,11 @@ export default function App() {
     const children = edges.filter(edge => edge.source === node.id).map(edge => {
       return converToParentChildJson(nodes.filter(node => node.id === edge.target)[0]);
     });
+    console.log(node);
     return {
       id: node.id,
-      name: node.data.label,
       type: node.type,
+      fields: node.data.fields,
       children: children
     }
   }
