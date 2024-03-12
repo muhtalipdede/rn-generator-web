@@ -6,7 +6,7 @@ function InputNode({ id, data, isConnectable }) {
     <div className="navigation-node">
       <Handle type="target" position={Position.Top} isConnectable={isConnectable} />
       <div>
-        <span className="label">
+        <span className="title">
             Input
         </span>
       </div>

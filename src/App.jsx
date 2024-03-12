@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState } from 'react';
 import ReactFlow, {
   MiniMap,
   Controls,
@@ -23,6 +23,9 @@ import {
 import NodeOptions from './constants/NodeOptions';
 import initialNodes from './constants/InitialNodes';
 import initialEdges from './constants/InitialEdges';
+import Header from './components/Header';
+import LeftBar from './components/LeftBar';
+import RightBar from './components/RightBar';
 import 'reactflow/dist/style.css';
 
 
@@ -47,6 +50,8 @@ export default function App() {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [showNodeTypes, setShowNodeTypes] = useState(false);
   const [showInfoModal, setShowInfoModal] = useState(false);
+  const [showDevicePreview, setShowDevicePreview] = useState(false);
+  const [showFields, setShowFields] = useState(false);
   const [selectedNode, setSelectedNode] = useState(nodes[0]);
   const [selectedScreen, setSelectedScreen] = useState(nodes.filter(node => node.type === 'screen')[0]);
 
@@ -108,7 +113,6 @@ export default function App() {
     const children = edges.filter(edge => edge.source === node.id).map(edge => {
       return converToParentChildJson(nodes.filter(node => node.id === edge.target)[0]);
     });
-    console.log(node);
     return {
       id: node.id,
       type: node.type,
@@ -133,16 +137,6 @@ export default function App() {
     if (element.type === 'screen') {
       setSelectedScreen(element);
     }
-  }
-
-  const removeNode = (node) => {
-    if (node.id === '1') {
-      alert('You cannot remove the root node.');
-      return;
-    }
-    setNodes((prevNodes) => prevNodes.filter(n => n.id !== node.id));
-    setEdges((prevEdges) => prevEdges.filter(e => e.source !== node.id && e.target !== node.id));
-    setSelectedNode(null);
   }
 
   const getChildren = (node) => {
@@ -206,116 +200,41 @@ export default function App() {
     }
   };
 
-  const convertStyle = (fields) => {
-    if (!fields) {
-      return {};
-    }
-    let style = {};
-    fields.forEach(field => {
-      style[field.name] = field.value;
-    });
-    return style;
-  }
-
-  const DevicePreview = () => {
-    const children = getChildren(selectedScreen);
-    console.log(children);
-    if (children.length === 0) {
-      return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: 10, width: 300, height: 600, backgroundColor: 'white', borderRadius: 20 }}>
-          <p style={{ textAlign: 'center', color: 'black', fontWeight: 'bold' }}>No children</p>
-        </div>
-      );
-    }
-    if (children.length > 2) {
-      alert('You can only have 2 children in a screen.');
-      return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: 10, width: 300, height: 600, backgroundColor: 'white', borderRadius: 20 }}>
-          <p style={{ textAlign: 'center', color: 'black', fontWeight: 'bold' }}>You can only have 2 children in a screen.</p>
-        </div>
-      );
-    }
-
-    if (children.length === 1) {
-      const frameFields = children[0].data.fields[0].fields || [];
-      const style = convertStyle(frameFields);
-      return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: 10, width: 300, height: 600, backgroundColor: 'white', borderRadius: 20 }}>
-          <div style={{ ...style }}>
-            {getChildren(children[0]).map(renderSubChild)}
-          </div>
-        </div>
-      );
-    }
-  };
-
-  const FieldComponent = ({ field }) => (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
-    </div>
-  );
-
-  const ObjectFieldComponent = ({ field }) => (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
-
-    </div>
-  );
-
-  const RightBar = () => {
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: 10 }}>
-        {selectedScreen.type === 'screen' && <DevicePreview />}
-        <button onClick={() => removeNode(selectedNode)}>Remove Node</button>
-      </div>
-    )
-  }
-
-  const LeftBar = () => {
-    return (
-      <div style={{ position: 'absolute', top: 0, left: 0, zIndex: 4, display: 'flex', flexDirection: 'column', backgroundColor: '#2c2c2c', height: '100vh', gap: 10, padding: 10 }}>
-        {NodeOptions.map((type) => (
-          <a key={type.type} onClick={() => addNode(type.type)} style={{ color: 'white', cursor: 'pointer' }}>
-            {type.name}
-          </a>
-        ))}
-      </div>
-    )
-  }
-
-  const handleProfile = () => {
-    console.log('profile');
-  }
-
-  const Header = () => {
-    return <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', padding: 10 }}>
-      <div style={{ display: 'flex', gap: 10 }}>
-        <button onClick={shareLink}>
-          <i className="fas fa-share-alt"></i>
-        </button>
-        <button onClick={downloadJson}>
-          <i className="fas fa-download"></i>
-        </button>
-        <button onClick={() => setShowInfoModal(!showInfoModal)}>
-          <i className="fas fa-info"></i>
-        </button>
-      </div>
-      <div>
-        <button onClick={handleProfile}>
-          <i className="fas fa-user"></i>
-        </button>
-      </div>
-    </div>
-  }
-
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
       <div style={{ position: 'absolute', top: 0, zIndex: 4, width: '100%', display: 'flex', justifyContent: 'center', backgroundColor: '#2c2c2c' }}>
-        <Header />
+        <Header 
+          setShowFields={setShowFields} 
+          showFields={showFields} 
+          setShowDevicePreview={setShowDevicePreview} 
+          showDevicePreview={showDevicePreview} 
+          setShowInfoModal={setShowInfoModal} 
+          showInfoModal={showInfoModal} 
+          shareLink={shareLink}
+          downloadJson={downloadJson}
+        />
       </div>
-      <div style={{ position: 'absolute', top: 50, zIndex: 4, display: 'flex', flexDirection: 'column', gap: 10, backgroundColor: '#2c2c2c', borderRadius: 5 }}>
-        <LeftBar />
+      <div style={{ position: 'absolute', top: 50, zIndex: 4, left: 0 }}>
+        <LeftBar 
+          nodes={nodes} 
+          addNode={addNode} 
+          setSelectedNode={setSelectedNode} 
+          setSelectedScreen={setSelectedScreen} 
+          showNodeTypes={showNodeTypes} 
+          setShowNodeTypes={setShowNodeTypes}
+        />
       </div>
-      <div style={{ position: 'absolute', top: 50, right: 0, zIndex: 4, display: 'flex', flexDirection: 'column', gap: 10, backgroundColor: '#2c2c2c', borderRadius: 5 }}>
-        <RightBar />
+      <div style={{ position: 'absolute', top: 50, right: 0, zIndex: 4 }}>
+        <RightBar 
+          selectedNode={selectedNode} 
+          setSelectedNode={setSelectedNode}
+          selectedScreen={selectedScreen}
+          showDevicePreview={showDevicePreview}
+          showFields={showFields}
+          nodes={nodes}
+          edges={edges}
+          renderSubChild={renderSubChild}
+        />
       </div>
       <ReactFlow
         nodes={nodes}
@@ -327,13 +246,6 @@ export default function App() {
         fitView="true"
         onNodeClick={onElementClick}
       >
-        {showNodeTypes && (
-          <div style={{ position: 'absolute', top: 50, left: 10, zIndex: 4, display: 'flex', flexDirection: 'column', gap: 10, backgroundColor: '#2c2c2c', borderRadius: 5 }}>
-            {NodeOptions.map((type) => (
-              <button key={type.type} onClick={() => addNode(type.type)}>{type.name}</button>
-            ))}
-          </div>
-        )}
         {showInfoModal && (
           <div style={{ position: 'absolute', top: 50, left: 190, zIndex: 4, display: 'flex', flexDirection: 'column', backgroundColor: '#2c2c2c', borderRadius: 5 }}>
             <p style={{ textAlign: 'center', color: 'black', fontWeight: 'bold' }}>React Native Generator</p>
