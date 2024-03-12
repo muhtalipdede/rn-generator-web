@@ -1,4 +1,9 @@
-const FieldsPreview = ({ selectedNode, setSelectedNode }) => {
+const FieldsPreview = ({ selectedNode, setSelectedNode, nodes, edges, addChild }) => {
+    const getChildren = (node) => {
+        return edges.filter(edge => edge.source === node.id).map(edge => {
+            return nodes.filter(node => node.id === edge.target)[0];
+        });
+    }
     const handleStyleChange = (field, value) => {
         const newFields = [...selectedNode.data.fields];
         newFields[field].value = value;
@@ -29,6 +34,11 @@ const FieldsPreview = ({ selectedNode, setSelectedNode }) => {
                     ))}
                 </div>
             ))}
+            <span style={{ color: 'white', fontWeight: 'bold' }}>Children</span>
+            {getChildren(selectedNode).map((child, index) => (
+                <button key={index} onClick={() => setSelectedNode(child)}>{child.data.fields[0].value}</button>
+            ))}
+            <button onClick={() => addChild(selectedNode)}>Add Child</button>
         </div>
     );
 }

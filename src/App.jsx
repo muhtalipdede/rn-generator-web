@@ -234,6 +234,7 @@ export default function App() {
           nodes={nodes}
           edges={edges}
           renderSubChild={renderSubChild}
+          addChild={addNode}
         />
       </div>
       <ReactFlow
