@@ -27,15 +27,12 @@ const NodeOptions = [
             {
                 name: 'style', type: 'object',
                 fields: [
-                    { name: 'backgroundColor', type: 'string', default: 'red', value: 'red' },
+                    { name: 'backgroundColor', type: 'string', default: 'black', value: 'black' },
                     { name: 'flex', type: 'number', default: 1, value: 1 },
+                    { name: 'flexDirection', type: 'string', default: 'column', value: 'column' },
                     { name: 'justifyContent', type: 'string', default: 'center', value: 'center' },
                     { name: 'alignItems', type: 'string', default: 'center', value: 'center' },
                     { name: 'padding', type: 'number', default: 20, value: 20 },
-                    { name: 'paddingTop', type: 'number', default: 20, value: 20 },
-                    { name: 'borderColor', type: 'string', default: 'black', value: 'black' },
-                    { name: 'borderWidth', type: 'number', default: 1, value: 1 },
-                    { name: 'borderRadius', type: 'number', default: 10, value: 10 },
                 ]
             },
         ]
@@ -47,24 +44,18 @@ const NodeOptions = [
             {
                 name: 'style', type: 'object',
                 fields: [
-                    { name: 'backgroundColor', type: 'string', default: 'white', value: 'white' },
+                    { name: 'backgroundColor', type: 'string', default: 'black', value: 'black' },
                     { name: 'flex', type: 'number', default: 1, value: 1 },
+                    { name: 'flexDirection', type: 'string', default: 'column', value: 'column' },
                     { name: 'justifyContent', type: 'string', default: 'center', value: 'center' },
                     { name: 'alignItems', type: 'string', default: 'center', value: 'center' },
                     { name: 'gap', type: 'number', default: 20, value: 20 },
                     { name: 'padding', type: 'number', default: 20, value: 20 },
-                    { name: 'paddingTop', type: 'number', default: 20, value: 20 },
                     { name: 'borderColor', type: 'string', default: 'black', value: 'black' },
                     { name: 'borderWidth', type: 'number', default: 1, value: 1 },
                     { name: 'borderRadius', type: 'number', default: 10, value: 10 },
-                    { name: 'shadowColor', type: 'string', default: 'black', value: 'black' },
-                    { name: 'shadowOffset', type: 'object', fields: [
-                        { name: 'width', type: 'number', default: 0, value: 0 },
-                        { name: 'height', type: 'number', default: 0, value: 0 },
-                    ] },
-                    { name: 'shadowOpacity', type: 'number', default: 0.5, value: 0.5 },
-                    { name: 'shadowRadius', type: 'number', default: 10, value: 10 },
-                    { name: 'elevation', type: 'number', default: 10, value: 10 },
+                    { name: 'width', type: 'number', default: 200, value: 200 },
+                    { name: 'height', type: 'number', default: 200, value: 200 },
                 ]
             },
         ]
@@ -76,12 +67,12 @@ const NodeOptions = [
             {
                 name: 'style', type: 'object',
                 fields: [
-                    { name: 'backgroundColor', type: 'string', default: 'white', value: 'white' },
+                    { name: 'backgroundColor', type: 'string', default: 'black', value: 'black' },
                     { name: 'flex', type: 'number', default: 1, value: 1 },
+                    { name: 'flexDirection', type: 'string', default: 'column', value: 'column' },
                     { name: 'justifyContent', type: 'string', default: 'center', value: 'center' },
                     { name: 'alignItems', type: 'string', default: 'center', value: 'center' },
                     { name: 'padding', type: 'number', default: 20, value: 20 },
-                    { name: 'paddingTop', type: 'number', default: 20, value: 20 },
                 ]
             },
         ]
@@ -94,13 +85,11 @@ const NodeOptions = [
             {
                 name: 'style', type: 'object',
                 fields: [
-                    { name: 'color', type: 'string', default: 'black', value: 'black' },
-                    { name: 'backgroundColor', type: 'string', default: 'white', value: 'white' },
+                    { name: 'color', type: 'string', default: 'white', value: 'white' },
+                    { name: 'backgroundColor', type: 'string', default: '', value: '' },
                     { name: 'fontSize', type: 'number', default: 16, value: 16 },
                     { name: 'fontWeight', type: 'string', default: 'normal', value: 'normal' },
                     { name: 'textAlign', type: 'string', default: 'center', value: 'center' },
-                    { name: 'padding', type: 'number', default: 20, value: 20 },
-                    { name: 'paddingTop', type: 'number', default: 20, value: 20 },
                 ]
             },
         ]
@@ -115,13 +104,16 @@ const NodeOptions = [
             {
                 name: 'style', type: 'object',
                 fields: [
-                    { name: 'color', type: 'string', default: 'blue', value: 'blue' },
+                    { name: 'color', type: 'string', default: 'black', value: 'black' },
                     { name: 'backgroundColor', type: 'string', default: 'white', value: 'white' },
                     { name: 'fontSize', type: 'number', default: 16, value: 16 },
                     { name: 'fontWeight', type: 'string', default: 'normal', value: 'normal' },
                     { name: 'textAlign', type: 'string', default: 'center', value: 'center' },
-                    { name: 'padding', type: 'number', default: 20, value: 20 },
-                    { name: 'paddingTop', type: 'number', default: 20, value: 20 },
+                    { name: 'borderColor', type: 'string', default: 'black', value: 'black' },
+                    { name: 'borderWidth', type: 'number', default: 1, value: 1 },
+                    { name: 'borderRadius', type: 'number', default: 10, value: 10 },
+                    { name: 'width', type: 'number', default: 200, value: 200 },
+                    { name: 'height', type: 'number', default: 40, value: 40 },
                 ]
             },
         ]
@@ -139,7 +131,6 @@ const NodeOptions = [
                     { name: 'fontWeight', type: 'string', default: 'normal', value: 'normal' },
                     { name: 'textAlign', type: 'string', default: 'center', value: 'center' },
                     { name: 'padding', type: 'number', default: 20, value: 20 },
-                    { name: 'paddingTop', type: 'number', default: 20, value: 20 },
                 ]
             },
         ]
@@ -159,13 +150,19 @@ const NodeOptions = [
             {
                 name: 'style', type: 'object', 
                 fields: [
-                    { name: 'color', type: 'string', default: 'black', value: 'black' },
+                    { name: 'flex', type: 'number', default: 1, value: 1 },
+                    { name: 'flexDirection', type: 'string', default: 'column', value: 'column' },
+                    { name: 'justifyContent', type: 'string', default: 'center', value: 'center' },
+                    { name: 'alignItems', type: 'string', default: 'center', value: 'center' },
                     { name: 'backgroundColor', type: 'string', default: 'white', value: 'white' },
+                    { name: 'color', type: 'string', default: 'black', value: 'black' },
                     { name: 'fontSize', type: 'number', default: 16, value: 16 },
                     { name: 'fontWeight', type: 'string', default: 'normal', value: 'normal' },
                     { name: 'textAlign', type: 'string', default: 'center', value: 'center' },
-                    { name: 'padding', type: 'number', default: 20, value: 20 },
-                    { name: 'paddingTop', type: 'number', default: 20, value: 20 },
+                    { name: 'borderColor', type: 'string', default: 'black', value: 'black' },
+                    { name: 'borderWidth', type: 'number', default: 1, value: 1 },
+                    { name: 'borderRadius', type: 'number', default: 10, value: 10 },
+                    { name: 'width', type: 'number', default: 200, value: 200 },
                 ]
             },
         ]
@@ -181,7 +178,6 @@ const NodeOptions = [
                     { name: 'width', type: 'number', default: 100, value: 100 },
                     { name: 'height', type: 'number', default: 100, value: 100 },
                     { name: 'padding', type: 'number', default: 20, value: 20 },
-                    { name: 'paddingTop', type: 'number', default: 20, value: 20 },
                 ]
             },
         ]

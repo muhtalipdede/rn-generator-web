@@ -12,11 +12,11 @@ const Header = ({ setShowFields, showFields, setShowDevicePreview, showDevicePre
             </button>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
-            <button onClick={() => setShowFields(!showFields)}>
-                <i className="fas fa-cog"></i>
-            </button>
             <button onClick={() => setShowDevicePreview(!showDevicePreview)}>
                 <i className="fas fa-mobile-alt"></i>
+            </button>
+            <button onClick={() => setShowFields(!showFields)}>
+                <i className="fas fa-cog"></i>
             </button>
         </div>
     </div>

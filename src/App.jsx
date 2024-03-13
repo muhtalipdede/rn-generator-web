@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import ReactFlow, {
   MiniMap,
   Controls,
@@ -50,10 +50,22 @@ export default function App() {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [showNodeTypes, setShowNodeTypes] = useState(false);
   const [showInfoModal, setShowInfoModal] = useState(false);
-  const [showDevicePreview, setShowDevicePreview] = useState(false);
-  const [showFields, setShowFields] = useState(false);
+  const [showDevicePreview, setShowDevicePreview] = useState(true);
+  const [showFields, setShowFields] = useState(true);
   const [selectedNode, setSelectedNode] = useState(nodes[0]);
   const [selectedScreen, setSelectedScreen] = useState(nodes.filter(node => node.type === 'screen')[0]);
+
+  useEffect(() => {
+    const submitChange = () => {
+      const id = selectedNode.id;
+      const index = nodes.findIndex(node => node.id === id);
+      const newNodes = [...nodes];
+      newNodes[index] = selectedNode;
+      setNodes(newNodes);
+    }
+
+    submitChange();
+  }, [selectedNode]);
 
   const onConnect = useCallback(
     (params) => {
@@ -94,14 +106,32 @@ export default function App() {
       alert('Node type not supported, please select another type.');
       return;
     }
+    const fields = NodeOptions.filter(option => option.type === type)[0].fields;
     const newNode = {
-      id: (parseInt(lastNode.id) + 1).toString(),
-      position: { x: lastNode.position.x, y: lastNode.position.y + 100 },
+      id: parseInt(Math.random() * 100000).toString(),
+      position: { x: lastNode.position.x + 100, y: lastNode.position.y + 100 },
       type: type,
-      data: { label: type, fields: NodeOptions.filter(option => option.type === type)[0].fields }
+      data: { label: type, fields: fields },
     };
     setNodes((prevNodes) => prevNodes.concat(newNode));
     setShowNodeTypes(false);
+  }
+
+  const addChild = (type) => {
+    if (NodeOptions.filter(option => option.type === type).length === 0) {
+      alert('Node type not supported, please select another type.');
+      return;
+    }
+    const newNode = {
+      id: parseInt(Math.random() * 100000).toString(),
+      position: { x: selectedNode.position.x, y: selectedNode.position.y + 100 },
+      type: type,
+      data: { label: type, fields: NodeOptions.filter(option => option.type === type)[0].fields },
+      children: []
+    };
+    setNodes((prevNodes) => prevNodes.concat(newNode));
+    setEdges((prevEdges) => prevEdges.concat({ id: `${selectedNode.id}-${newNode.id}`, source: selectedNode.id, target: newNode.id }));
+    setSelectedNode(newNode);
   }
 
   const shareLink = () => {
@@ -122,8 +152,8 @@ export default function App() {
   }
 
   const downloadJson = () => {
-    const data = converToParentChildJson(nodes.filter(node => node.id === '1')[0]);
-    console.log([data]);
+    let data = converToParentChildJson(nodes.filter(node => node.id === '1')[0]);
+    data = checkTypeForFields(data);
     const url = window.URL.createObjectURL(new Blob([JSON.stringify([data])]));
     const link = document.createElement('a');
     link.href = url;
@@ -145,51 +175,110 @@ export default function App() {
     });
   }
 
-  const TextComponent = ({ }) => (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <p style={{ color: 'black', fontWeight: 'bold' }}>Text</p>
-    </div>
+  const TextComponent = ({ subChild, style }) => (
+    <p style={{ ...style, display: 'flex' }}>{subChild.data.fields.filter(field => field.name === 'text')[0].value}</p>
   );
 
-  const InputComponent = () => (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <input type="text" style={{ padding: 10, borderRadius: 10 }} />
-    </div>
+  const InputComponent = ({ subChild, style }) => (
+    <input style={{ ...style, display: 'flex' }} placeholder={subChild.data.fields.filter(field => field.name === 'placeholder')[0].value} />
   );
 
-  const ButtonComponent = () => (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <button style={{ backgroundColor: 'blue', color: 'white', padding: 10, borderRadius: 10 }}>Button</button>
-    </div>
+  const ButtonComponent = ({ subChild, style }) => (
+    <button style={{ ...style, display: 'flex' }}>Button</button>
   );
 
-  const ImageComponent = () => (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
+  const ImageComponent = ({ subChild, style }) => (
+    <div style={{ ...style, display: 'flex' }}>
       <img src="https://miro.medium.com/v2/resize:fit:1024/1*QY5S4senfFh-mIViSi5A_Q.png" alt="logo" />
     </div>
   );
 
-  const ViewComponent = ({ label, children }) => (
-    <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'blue', padding: 10, borderRadius: 10, height: 100, justifyContent: 'center' }}>
+  const ViewComponent = ({ children, style }) => (
+    <div style={{ ...style, display: 'flex' }}>
       {children && children.map(renderSubChild)}
     </div>
   );
 
+  const convertStyleForHtml = (fields) => {
+    if (!fields) {
+      return {};
+    }
+    let style = {};
+    fields.forEach(field => {
+      if (field.name === 'backgroundColor') {
+        style.backgroundColor = field.value;
+      }
+      if (field.name === 'fontSize') {
+        style.fontSize = field.value + 'px';
+      }
+      if (field.name === 'fontWeight') {
+        style.fontWeight = field.value;
+      }
+      if (field.name === 'textAlign') {
+        style.textAlign = field.value;
+      }
+      if (field.name === 'padding') {
+        style.padding = field.value + 'px';
+      }
+      if (field.name === 'paddingTop') {
+        style.paddingTop = field.value + 'px';
+      }
+      if (field.name === 'flex') {
+        style.flex = field.value;
+      }
+      if (field.name === 'flexDirection') {
+        style.flexDirection = field.value;
+      }
+      if (field.name === 'justifyContent') {
+        style.justifyContent = field.value;
+      }
+      if (field.name === 'alignItems') {
+        style.alignItems = field.value;
+      }
+      if (field.name === 'gap') {
+        style.gap = field.value;
+      }
+      if (field.name === 'borderColor') {
+        style.borderColor = field.value;
+      }
+      if (field.name === 'borderWidth') {
+        style.borderWidth = field.value + 'px';
+      }
+      if (field.name === 'borderRadius') {
+        style.borderRadius = field.value + 'px';
+      }
+      if (field.name === 'shadowColor') {
+        style.shadowColor = field.value;
+      }
+      if(field.name === 'color') {
+        style.color = field.value;
+      }
+      if (field.name === 'width') {
+        style.width = '100%';
+      }
+      if (field.name === 'height') {
+        style.height = '100%';
+      }
+    });
+    return style;
+  }
+
   const renderSubChild = (subChild, subIndex) => {
+    const style = convertStyleForHtml(subChild.data.fields.filter(field => field.name === 'style')[0].fields);
     switch (subChild.type) {
       case 'text':
-        return <TextComponent key={subIndex} />;
+        return <TextComponent key={subIndex} subChild={subChild} style={style} />;
       case 'input':
-        return <InputComponent key={subIndex} />;
+        return <InputComponent key={subIndex} subChild={subChild} style={style} />;
       case 'touchableOpacity':
       case 'button':
-        return <ButtonComponent key={subIndex} />;
+        return <ButtonComponent key={subIndex} subChild={subChild} style={style} />;
       case 'image':
-        return <ImageComponent key={subIndex} />;
+        return <ImageComponent key={subIndex} subChild={subChild} style={style} />;
       case 'view':
       case 'scrollView':
       case 'safeAreaView':
-        return <ViewComponent key={subIndex} children={getChildren(subChild)} />;
+        return <ViewComponent key={subIndex} children={getChildren(subChild)} style={style} />;
       default:
         return (
           <div key={subIndex} style={{ display: 'flex', flexDirection: 'column' }}>
@@ -203,30 +292,30 @@ export default function App() {
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
       <div style={{ position: 'absolute', top: 0, zIndex: 4, width: '100%', display: 'flex', justifyContent: 'center', backgroundColor: '#2c2c2c' }}>
-        <Header 
-          setShowFields={setShowFields} 
-          showFields={showFields} 
-          setShowDevicePreview={setShowDevicePreview} 
-          showDevicePreview={showDevicePreview} 
-          setShowInfoModal={setShowInfoModal} 
-          showInfoModal={showInfoModal} 
+        <Header
+          setShowFields={setShowFields}
+          showFields={showFields}
+          setShowDevicePreview={setShowDevicePreview}
+          showDevicePreview={showDevicePreview}
+          setShowInfoModal={setShowInfoModal}
+          showInfoModal={showInfoModal}
           shareLink={shareLink}
           downloadJson={downloadJson}
         />
       </div>
       <div style={{ position: 'absolute', top: 50, zIndex: 4, left: 0 }}>
-        <LeftBar 
-          nodes={nodes} 
-          addNode={addNode} 
-          setSelectedNode={setSelectedNode} 
-          setSelectedScreen={setSelectedScreen} 
-          showNodeTypes={showNodeTypes} 
+        <LeftBar
+          nodes={nodes}
+          addNode={addNode}
+          setSelectedNode={setSelectedNode}
+          setSelectedScreen={setSelectedScreen}
+          showNodeTypes={showNodeTypes}
           setShowNodeTypes={setShowNodeTypes}
         />
       </div>
       <div style={{ position: 'absolute', top: 50, right: 0, zIndex: 4 }}>
-        <RightBar 
-          selectedNode={selectedNode} 
+        <RightBar
+          selectedNode={selectedNode}
           setSelectedNode={setSelectedNode}
           selectedScreen={selectedScreen}
           showDevicePreview={showDevicePreview}
@@ -234,7 +323,7 @@ export default function App() {
           nodes={nodes}
           edges={edges}
           renderSubChild={renderSubChild}
-          addChild={addNode}
+          addChild={addChild}
         />
       </div>
       <ReactFlow

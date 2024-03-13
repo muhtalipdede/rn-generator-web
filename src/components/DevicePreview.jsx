@@ -4,41 +4,69 @@ const DevicePreview = ({ selectedScreen, nodes, edges, renderSubChild }) => {
             return nodes.filter(node => node.id === edge.target)[0];
         });
     }
-    const convertStyle = (fields) => {
+    const convertStyleForHtml = (fields) => {
         if (!fields) {
             return {};
         }
         let style = {};
         fields.forEach(field => {
-            style[field.name] = field.value;
+            if (field.name === 'backgroundColor') {
+                style.backgroundColor = field.value;
+            }
+            if (field.name === 'fontSize') {
+                style.fontSize = field.value;
+            }
+            if (field.name === 'fontWeight') {
+                style.fontWeight = field.value;
+            }
+            if (field.name === 'textAlign') {
+                style.textAlign = field.value;
+            }
+            if (field.name === 'padding') {
+                style.padding = field.value;
+            }
+            if (field.name === 'paddingTop') {
+                style.paddingTop = field.value;
+            }
+            if (field.name === 'flex') {
+                style.flex = field.value;
+            }
+            if (field.name === 'flexDirection') {
+                style.flexDirection = field.value;
+            }
+            if (field.name === 'justifyContent') {
+                style.justifyContent = field.value;
+            }
+            if (field.name === 'alignItems') {
+                style.alignItems = field.value;
+            }
+            if (field.name === 'gap') {
+                style.gap = field.value;
+            }
+            if (field.name === 'borderColor') {
+                style.borderColor = field.value;
+            }
+            if (field.name === 'borderWidth') {
+                style.borderWidth = field.value;
+            }
+            if (field.name === 'borderRadius') {
+                style.borderRadius = field.value;
+            }
+            if (field.name === 'shadowColor') {
+                style.shadowColor = field.value;
+            }
         });
         return style;
     }
     const children = getChildren(selectedScreen);
-    if (children.length === 0) {
-        return (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: 10, width: 300, height: 600, backgroundColor: 'white', borderRadius: 20 }}>
-                <p style={{ textAlign: 'center', color: 'black', fontWeight: 'bold' }}>No children</p>
-            </div>
-        );
-    }
-    if (children.length > 2) {
-        alert('You can only have 2 children in a screen.');
-        return (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: 10, width: 300, height: 600, backgroundColor: 'white', borderRadius: 20 }}>
-                <p style={{ textAlign: 'center', color: 'black', fontWeight: 'bold' }}>You can only have 2 children in a screen.</p>
-            </div>
-        );
-    }
-
     if (children.length === 1) {
-        const frameFields = children[0].data.fields[0].fields || [];
-        const style = convertStyle(frameFields);
+        console.log('children[0].data', children[0].data);
+        const frameFields = children[0].data.fields.filter(field => field.name === 'style')[0].fields;
+        const style = convertStyleForHtml(frameFields);
+        console.log('style', style);
         return (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: 10, width: 300, height: 600, backgroundColor: 'white', borderRadius: 20 }}>
-                <div style={{ ...style }}>
-                    {getChildren(children[0]).map(renderSubChild)}
-                </div>
+            <div style={{ ...style, display: 'flex' }}>
+                {getChildren(children[0]).map(renderSubChild)}
             </div>
         );
     }
